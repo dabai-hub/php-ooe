@@ -1,0 +1,21 @@
+{
+    "name": "hezalex/ooe",
+    "description": "PHP object-oriented extension",
+    "keywords": ["php-ooe", "php ooe", "php", "ooe"],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Zixing He",
+            "email": "studyforzx@gmail.com",
+            "homepage": "https://github.com/studyforzx"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Hezalex\\Ooe\\": ""
+        }
+    },
+    "minimum-stability": "dev"
+}
