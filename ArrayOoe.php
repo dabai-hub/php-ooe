@@ -23,8 +23,8 @@ class ArrayOoe
      * @var array
      */
     protected static $mapping = [
-        'changeKeyCase' => ['func' => 'array_change_key_case', 'defaults' => [CASE_LOWER]],
-        'chunk' => 'array_chunk',
+        'changeKeyCase' => ['func' => 'array_change_key_case', 'must' => 0, 'defaults' => [CASE_LOWER]],
+        'chunk' => ['func' => 'array_chunk', 'must' => 1, 'defaults' => [false]],
     ];
 
     /**
@@ -107,16 +107,33 @@ class ArrayOoe
      */
     public function __call($name, $params)
     {
+        $params = func_get_arg(1);
+
+        $must = self::$mapping[$name]['must'];
+
+        $defaults = self::$mapping[$name]['defaults'];
+
+        $musts = [];
+
         if (array_key_exists($name, self::$mapping)) {
 
-            $params = func_get_arg(1);
+            if ($must) {
+                // 所传参数小于必传参数个数时 抛出异常
+                if (count($params) < $must) {
+                    throw new \BadMethodCallException ("the method {$name} was passed with the wrong parameter");
+                }
 
-            $defaults = self::$mapping[$name]['defaults'];
+                $musts = array_slice($params, 0, $must);
+
+                $params = array_slice($params, $must - 1);
+            }
 
             // The entered parameters override the default values
             $covers = $params + $defaults;
 
-            return $this->execOoeMethod($name, $covers);
+            array_push($musts, ...$covers);
+
+            return $this->execOoeMethod($name, $musts);
         } else {
             throw new \BadMethodCallException ("the method {$name} is undefined");
         }
