@@ -30,7 +30,8 @@ class ArrayOoe
         'countValues' => ['func' => 'array_count_values', 'must' => 0, 'defaults' => []],
         'diffAssoc' => ['func' => 'array_diff_assoc', 'must' => 2, 'defaults' => []],
         'diffKey' => ['func' => 'array_diff_key', 'must' => 2, 'defaults' => []],
-        'diffUassoc' => ['func' => 'array_diff_uassoc', 'must' => 2, 'defaults' => []], //TODO: 这里需要再看下怎么封装 回调在最后一个位置
+        'diffUassoc' => ['func' => 'array_diff_uassoc', 'must' => 2, 'defaults' => []], // TODO: 这里需要再看下怎么封装 回调在最后一个位置
+        'diffUkey' => ['func' => 'array_diff_ukey', 'must' => 2, 'defaults' => []],
     ];
 
     /**
