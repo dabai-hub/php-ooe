@@ -25,6 +25,12 @@ class ArrayOoe
     protected static $mapping = [
         'changeKeyCase' => ['func' => 'array_change_key_case', 'must' => 0, 'defaults' => [CASE_LOWER]],
         'chunk' => ['func' => 'array_chunk', 'must' => 1, 'defaults' => [false]],
+        'column' => ['func' => 'array_column', 'must' => 1, 'defaults' => [null]],
+        'combine' => ['func' => 'array_combine', 'must' => 1, 'defaults' => []],
+        'countValues' => ['func' => 'array_count_values', 'must' => 0, 'defaults' => []],
+        'diffAssoc' => ['func' => 'array_diff_assoc', 'must' => 2, 'defaults' => []],
+        'diffKey' => ['func' => 'array_diff_key', 'must' => 2, 'defaults' => []],
+        'diffUassoc' => ['func' => 'array_diff_uassoc', 'must' => 2, 'defaults' => []], //TODO: 这里需要再看下怎么封装 回调在最后一个位置
     ];
 
     /**
