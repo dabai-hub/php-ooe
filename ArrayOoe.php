@@ -4,12 +4,15 @@ declare (strict_types = 1);
 
 namespace Hezalex\Ooe;
 
+use Countable;
+use ArrayAccess;
+use Traversable;
+use JsonSerializable;
+use IteratorAggregate;
 use Hezalex\Ooe\Traits\Help;
 
-class ArrayOoe
+class ArrayOoe extends Ooe implements ArrayAccess, Countable, IteratorAggregate, JsonSerializable
 {
-    use Help;
-
     /**
      * This array is not an objectified array
      *
@@ -23,15 +26,86 @@ class ArrayOoe
      * @var array
      */
     protected static $mapping = [
-        'changeKeyCase' => ['func' => 'array_change_key_case', 'must' => 0, 'defaults' => [CASE_LOWER]],
-        'chunk' => ['func' => 'array_chunk', 'must' => 1, 'defaults' => [false]],
-        'column' => ['func' => 'array_column', 'must' => 1, 'defaults' => [null]],
-        'combine' => ['func' => 'array_combine', 'must' => 1, 'defaults' => []],
-        'countValues' => ['func' => 'array_count_values', 'must' => 0, 'defaults' => []],
-        'diffAssoc' => ['func' => 'array_diff_assoc', 'must' => 2, 'defaults' => []],
-        'diffKey' => ['func' => 'array_diff_key', 'must' => 2, 'defaults' => []],
-        'diffUassoc' => ['func' => 'array_diff_uassoc', 'must' => 2, 'defaults' => []], // TODO: 这里需要再看下怎么封装 回调在最后一个位置
-        'diffUkey' => ['func' => 'array_diff_ukey', 'must' => 2, 'defaults' => []],
+        'changeKeyCase' => 'array_change_key_case',
+        'chunk' => 'array_chunk',
+        'column' =>'array_column',
+        'combine' => 'array_combine',
+        'countValues' => 'array_count_values',
+        'diffAssoc' => 'array_diff_assoc',
+        'diffKey' =>'array_diff_key',
+        'diffUassoc' => 'array_diff_uassoc',
+        'diffUkey' => 'array_diff_ukey',
+        'diff' => 'array_diff',
+        'fillKeys' => 'array_fill_keys',
+        'fill' => 'array_fill',
+        'filter' => 'array_filter',
+        'flip' => 'array_flip',
+        'intersectAssoc' => 'array_intersect_assoc',
+        'intersectKey' => 'array_intersect_key',
+        'intersectUassoc' => 'array_intersect_uassoc',
+        'intersectUkey' => 'array_intersect_ukey',
+        'intersect' => 'array_intersect',
+        'keyExists' => 'array_key_exists',
+        'keyFirst' => 'array_key_first',
+        'keyLast' => 'array_key_last',
+        'keys' => 'array_keys',
+        'map' => 'array_map',
+        'mergeRecursive' => 'array_merge_recursive',
+        'merge' => 'array_merge',
+        'multisort' => 'array_multisort',
+        'pad' => 'array_pad',
+        'pop' => 'array_pop',
+        'product' => 'array_product',
+        'push' => 'array_push',
+        'rand' => 'array_rand',
+        'reduce' => 'array_reduce',
+        'replaceRecursive' => 'array_replace_recursive',
+        'replace' => 'array_replace',
+        'reverse' => 'array_reverse',
+        'search' => 'array_search',
+        'shift' => 'array_shift',
+        'slice' => 'array_slice',
+        'splice' => 'array_splice',
+        'sum' => 'array_sum',
+        'udiffAssoc' => 'array_udiff_assoc',
+        'udiffUassoc' => 'array_udiff_uassoc',
+        'udiff' => 'array_udiff',
+        'uintersect_assoc' => ' array_uintersect_assoc',
+        'uintersect_uassoc' => 'array_uintersect_assoc',
+        'uintersect' => 'array_uintersect',
+        'unique' => 'array_unique',
+        'unshift' => 'array_unshift',
+        'values' => 'array_values',
+        'walkRecursive' => 'array_walk_recursive',
+        'walk' => 'array_walk',
+        'array' => 'array',
+        'arsort' => 'arsort',
+        'asort' => 'asort',
+        'compact' => 'compact',
+        // 'count' => 'count',
+        'current' => 'current',
+        'end' => 'end',
+        'extract' => 'extract',
+        'inArray' => 'in_array',
+        'keyExists' => 'key_exists',
+        'key' => 'key',
+        'krsort' => 'krsort',
+        'ksort' => 'ksort',
+        'list' => 'list',
+        'natcasesort' => 'natcasesort',
+        'natsort' => 'natsort',
+        'next' => 'next',
+        'pos' => 'pos',
+        'prev' => 'prev',
+        'range' => 'range',
+        'reset' => 'reset',
+        'rsort' => 'rsort',
+        'shuffle' => 'shuffle',
+        'sizeof' => 'sizeof',
+        'sort' => 'sort',
+        'uasort' => 'uasort',
+        'uksort' => 'uksort',
+        'usort' => 'usort',
     ];
 
     /**
@@ -39,9 +113,7 @@ class ArrayOoe
      *
      * @var array
      */
-    private $deprecated = [
-
-    ];
+    private $deprecated = [];
 
     /**
      * Attribute assignment
@@ -84,65 +156,72 @@ class ArrayOoe
         return count($this->array);
     }
 
-    public function execOoeMethod($name, $params)
+    /**
+     * Whether an offset exists
+     *
+     * @param  mixed $offset
+     * @return boolean
+     */
+    public function offsetExists(mixed $offset) : boolean
     {
-        $array = $this->execBuiltInFunction($name, $params);
-
-        // TODO: 判断返回值是否为数组，如果是则实例化带参数 不是的话 再写逻辑
-
-        return new static($array);
+        return isset($this->array[$offset]);
     }
 
     /**
-     * execute the specified built-in function
+     * Offset to retrieve
      *
-     * @param  string $name
-     * @param  array  $params
-     * @return array
+     * @param mixed $offset
+     * @return mixed
      */
-    private function execBuiltInFunction($name, $params)
+    public function offsetGet(mixed $offset) : mixed
     {
-        $name = self::$mapping[$name]['func'];
+        return $this->array[$offset];
+    }
 
-        return call_user_func($name, $this->array, ...$params);
+    /**
+     * Assign a value to the specified offset
+     *
+     * @param mixed $offset
+     * @param mixed $value
+     * @return void
+     */
+    public function offsetSet(mixed $offset, mixed $value) : void
+    {
+        if (is_null($offset)) {
+            $this->array[] = $value;
+        } else {
+            $this->array[$offset] = $value;
+        }
+    }
+
+    /**
+     * Unset an offset
+     *
+     * @param mixed $offset
+     * @return void
+     */
+    public function offsetUnset(mixed $offset) : void
+    {
+        unset($this->array[$offset]);
+    }
+
+    /**
+     * Retrieve an external iterator
+     *
+     * @return Traversable
+     */
+    public function getIterator() : Traversable
+    {
+        return new ArrayIterator($this->array);
     }
 
     /**
      * Undocumented function
      *
-     * @return void
+     * @return mixed
      */
-    public function __call($name, $params)
+    public function jsonSerialize() : mixed
     {
-        $params = func_get_arg(1);
-
-        $must = self::$mapping[$name]['must'];
-
-        $defaults = self::$mapping[$name]['defaults'];
-
-        $musts = [];
-
-        if (array_key_exists($name, self::$mapping)) {
-
-            if ($must) {
-                // 所传参数小于必传参数个数时 抛出异常
-                if (count($params) < $must) {
-                    throw new \BadMethodCallException ("the method {$name} was passed with the wrong parameter");
-                }
-
-                $musts = array_slice($params, 0, $must);
-
-                $params = array_slice($params, $must - 1);
-            }
-
-            // The entered parameters override the default values
-            $covers = $params + $defaults;
-
-            array_push($musts, ...$covers);
-
-            return $this->execOoeMethod($name, $musts);
-        } else {
-            throw new \BadMethodCallException ("the method {$name} is undefined");
-        }
+        // TODO:
     }
 }
