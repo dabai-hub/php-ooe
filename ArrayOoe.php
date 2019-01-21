@@ -18,7 +18,7 @@ class ArrayOoe extends Ooe implements ArrayAccess, Countable, IteratorAggregate,
      *
      * @var array
      */
-    protected $array = [];
+    protected $container = [];
 
     /**
      * built-in functions mapping
@@ -106,6 +106,7 @@ class ArrayOoe extends Ooe implements ArrayAccess, Countable, IteratorAggregate,
         'uasort' => 'uasort',
         'uksort' => 'uksort',
         'usort' => 'usort',
+        'each' => 'each',
     ];
 
     /**
@@ -123,7 +124,7 @@ class ArrayOoe extends Ooe implements ArrayAccess, Countable, IteratorAggregate,
      */
     public function __construct(array $array = [])
     {
-        $this->array = $array;
+        $this->container = $array;
     }
 
     /**
@@ -133,7 +134,7 @@ class ArrayOoe extends Ooe implements ArrayAccess, Countable, IteratorAggregate,
      */
     public function get() : array
     {
-        return $this->array;
+        return $this->container;
     }
 
     /**
@@ -153,7 +154,7 @@ class ArrayOoe extends Ooe implements ArrayAccess, Countable, IteratorAggregate,
      */
     public function count() : int
     {
-        return count($this->array);
+        return count($this->container);
     }
 
     /**
@@ -162,9 +163,9 @@ class ArrayOoe extends Ooe implements ArrayAccess, Countable, IteratorAggregate,
      * @param  mixed $offset
      * @return boolean
      */
-    public function offsetExists(mixed $offset) : boolean
+    public function offsetExists($offset) : boolean
     {
-        return isset($this->array[$offset]);
+        return isset($this->container[$offset]);
     }
 
     /**
@@ -173,9 +174,9 @@ class ArrayOoe extends Ooe implements ArrayAccess, Countable, IteratorAggregate,
      * @param mixed $offset
      * @return mixed
      */
-    public function offsetGet(mixed $offset) : mixed
+    public function offsetGet($offset) : mixed
     {
-        return $this->array[$offset];
+        return $this->container[$offset];
     }
 
     /**
@@ -185,12 +186,12 @@ class ArrayOoe extends Ooe implements ArrayAccess, Countable, IteratorAggregate,
      * @param mixed $value
      * @return void
      */
-    public function offsetSet(mixed $offset, mixed $value) : void
+    public function offsetSet($offset, $value) : void
     {
         if (is_null($offset)) {
-            $this->array[] = $value;
+            $this->container[] = $value;
         } else {
-            $this->array[$offset] = $value;
+            $this->container[$offset] = $value;
         }
     }
 
@@ -200,9 +201,9 @@ class ArrayOoe extends Ooe implements ArrayAccess, Countable, IteratorAggregate,
      * @param mixed $offset
      * @return void
      */
-    public function offsetUnset(mixed $offset) : void
+    public function offsetUnset($offset) : void
     {
-        unset($this->array[$offset]);
+        unset($this->container[$offset]);
     }
 
     /**
@@ -212,7 +213,7 @@ class ArrayOoe extends Ooe implements ArrayAccess, Countable, IteratorAggregate,
      */
     public function getIterator() : Traversable
     {
-        return new ArrayIterator($this->array);
+        return new ArrayIterator($this->container);
     }
 
     /**

@@ -4,6 +4,28 @@ namespace Hezalex\Ooe;
 
 class Ooe
 {
+
+    /**
+     * Ooe container
+     *
+     * @var mixed
+     */
+    protected $container;
+
+    /**
+     * Built-in method called
+     *
+     * @var string
+     */
+    private $builtInName = '';
+
+    /**
+     * ooe method called
+     *
+     * @var string
+     */
+    private $ooeName = '';
+
     /**
      * built-in functions mapping
      *
@@ -11,13 +33,13 @@ class Ooe
      */
     protected static $mapping = [];
 
-    private function execOoeMethod($name, $params)
+    private function execOoeMethod($params)
     {
-        $array = $this->execBuiltInFunction($name, $params);
+        $container = $this->execBuiltInFunction($this->ooeName, $params);
 
-        // TODO: 判断返回值是否为数组，如果是则实例化带参数 不是的话 再写逻辑
+        // TODO: 判断返回值的类型，然后决定返回值是什么 现在暂且将其当做操作后返回的原类型
 
-        return new static($array);
+        return new static($container);
     }
 
     /**
@@ -27,11 +49,64 @@ class Ooe
      * @param  array  $params
      * @return array
      */
-    private function execBuiltInFunction($name, $params)
+    private function execBuiltInFunction(string $name, array $params)
     {
-        $name = self::$mapping[$name]['func'];
+        $this->name = static::$mapping[$name];
 
-        return call_user_func($name, $this->array, ...$params);
+        // TODO: 有些方法不需要传递数组 或者数组在最后一个位置，这里需要解决下
+
+        set_error_handler([$this, 'errorHandler']);
+
+        $result = call_user_func($this->name, $this->container, ...$params);
+
+        restore_error_handler();
+
+        return $result;
+    }
+
+    /**
+     * user-defined error handler function
+     *
+     * @param  integer $errno
+     * @param  string  $errstr
+     * @param  string  $errfile
+     * @param  integer $errline
+     * @return void
+     */
+    private function errorHandler(int $errno, string $errstr, string $errfile, int $errline)
+    {
+        switch ($errno) {
+            case E_PARSE:
+            case E_ERROR:
+            case E_USER_ERROR:
+            case E_CORE_ERROR:
+            case E_COMPILE_ERROR:
+            case E_RECOVERABLE_ERROR:
+                $level = 'Fatal Error:';
+                break;
+            case E_WARNING:
+            case E_USER_WARNING:
+            case E_COMPILE_WARNING:
+                $level = 'Warning:';
+                break;
+            case E_NOTICE:
+            case E_USER_NOTICE:
+                $level = 'Notice:';
+                break;
+            case E_STRICT:
+                $level = 'Strict:';
+                break;
+            case E_DEPRECATED:
+            case E_USER_DEPRECATED:
+                $level = 'Deprecated:';
+                break;
+            default:
+                break;
+        }
+
+        $errstr = preg_replace("/{$this->name}/", $this->ooeName, $errstr);
+
+        echo "{$level} {$errstr} in {$errfile} on line {$errline}" . PHP_EOL;
     }
 
     /**
@@ -39,37 +114,10 @@ class Ooe
      *
      * @return void
      */
-    public function __callStatic($name, $params)
+    public function __call($name, $params)
     {
-        $params = func_get_arg(1);
+        $this->ooeName = $name;
 
-        $must = self::$mapping[$name]['must'];
-
-        $defaults = self::$mapping[$name]['defaults'];
-
-        $musts = [];
-
-        if (array_key_exists($name, self::$mapping)) {
-
-            if ($must) {
-                // 所传参数小于必传参数个数时 抛出异常
-                if (count($params) < $must) {
-                    throw new \BadMethodCallException("the method {$name} was passed with the wrong parameter");
-                }
-
-                $musts = array_slice($params, 0, $must);
-
-                $params = array_slice($params, $must - 1);
-            }
-
-            // The entered parameters override the default values
-            $covers = $params + $defaults;
-
-            array_push($musts, ...$covers);
-
-            return $this->execOoeMethod($name, $musts);
-        } else {
-            throw new \BadMethodCallException("the method {$name} is undefined");
-        }
+        return $this->execOoeMethod($params);
     }
 }
