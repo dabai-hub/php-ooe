@@ -4,6 +4,7 @@ declare (strict_types = 1);
 
 namespace Hezalex\Ooe;
 
+use Closure;
 use Countable;
 use ArrayAccess;
 use Traversable;
@@ -224,5 +225,42 @@ class ArrayOoe extends Ooe implements ArrayAccess, Countable, IteratorAggregate,
     public function jsonSerialize() : mixed
     {
         // TODO:
+    }
+
+    /**
+     * array to json
+     *
+     * @param  integer $options
+     * @param  integer $depth
+     * @return string
+     */
+    public function toJson(int $options = 0, int $depth = 512) : string
+    {
+        return json_encode($this->item, $options, $depth);
+    }
+
+    /**
+     * object to string
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        $this->toJson();
+    }
+
+    /**
+     * User-defined method
+     *
+     * @param Closure $closure
+     * @return void
+     */
+    public function customer(Closure $closure)
+    {
+        $closure->bindTo($this);
+
+        $result = $closure($this->container);
+
+        // TODO: 在这里判断是否把返回结果赋值给 $this->container 还是直接返回
     }
 }
