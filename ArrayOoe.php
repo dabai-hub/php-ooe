@@ -246,21 +246,31 @@ class ArrayOoe extends Ooe implements ArrayAccess, Countable, IteratorAggregate,
      */
     public function __toString()
     {
-        $this->toJson();
+        // TODO: 需要改进下
+        return $this->toJson();
     }
 
     /**
      * User-defined method
      *
-     * @param Closure $closure
-     * @return void
+     * @param  Closure $closure
+     * @param  boolean $option
+     * @return mixed
      */
-    public function customer(Closure $closure)
+    public function customer(Closure $closure, bool $option = false)
     {
         $closure->bindTo($this);
 
         $result = $closure($this->container);
 
-        // TODO: 在这里判断是否把返回结果赋值给 $this->container 还是直接返回
+        // if $option is true then return the result or return the class instance
+        // this is for improving method flexibility.
+        if ($option) {
+            return $result;
+        }
+
+        $this->container = $result;
+
+        return new static($this->container);
     }
 }
