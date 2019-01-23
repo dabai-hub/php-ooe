@@ -10,9 +10,8 @@ use ArrayAccess;
 use Traversable;
 use JsonSerializable;
 use IteratorAggregate;
-use Hezalex\Ooe\Traits\Help;
 
-class ArrayOoe extends Ooe implements ArrayAccess, Countable, IteratorAggregate, JsonSerializable
+class ArrayOoe extends Ooe implements ArrayAccess, Countable, IteratorAggregate
 {
     /**
      * This array is not an objectified array
@@ -29,11 +28,11 @@ class ArrayOoe extends Ooe implements ArrayAccess, Countable, IteratorAggregate,
     protected static $mapping = [
         'changeKeyCase' => 'array_change_key_case',
         'chunk' => 'array_chunk',
-        'column' =>'array_column',
+        'column' => 'array_column',
         'combine' => 'array_combine',
         'countValues' => 'array_count_values',
         'diffAssoc' => 'array_diff_assoc',
-        'diffKey' =>'array_diff_key',
+        'diffKey' => 'array_diff_key',
         'diffUassoc' => 'array_diff_uassoc',
         'diffUkey' => 'array_diff_ukey',
         'diff' => 'array_diff',
@@ -215,16 +214,6 @@ class ArrayOoe extends Ooe implements ArrayAccess, Countable, IteratorAggregate,
     public function getIterator() : Traversable
     {
         return new ArrayIterator($this->container);
-    }
-
-    /**
-     * Undocumented function
-     *
-     * @return mixed
-     */
-    public function jsonSerialize() : mixed
-    {
-        // TODO:
     }
 
     /**

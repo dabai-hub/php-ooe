@@ -1,7 +1,12 @@
 {
     "name": "hezalex/ooe",
     "description": "PHP object-oriented extension",
-    "keywords": ["php-ooe", "php ooe", "php", "ooe"],
+    "keywords": [
+        "php-ooe",
+        "php ooe",
+        "php",
+        "ooe"
+    ],
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -17,5 +22,8 @@
             "Hezalex\\Ooe\\": ""
         }
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "require-dev": {
+        "phpunit/phpunit": "^8.0@dev"
+    }
 }
