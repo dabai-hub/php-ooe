@@ -22,8 +22,13 @@
             "Hezalex\\Ooe\\": ""
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Test\\": "tests/"
+        }
+    },
     "minimum-stability": "dev",
     "require-dev": {
-        "phpunit/phpunit": "^8.0@dev"
+        "phpunit/phpunit": "^7.5.2"
     }
 }

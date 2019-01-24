@@ -35,11 +35,15 @@ class Ooe
 
     private function execOoeMethod($params)
     {
-        $container = $this->execBuiltInFunction($this->ooeName, $params);
+        $result = $this->execBuiltInFunction($this->ooeName, $params);
 
-        // TODO: 判断返回值的类型，然后决定返回值是什么 现在暂且将其当做操作后返回的原类型
+        // if result is array return instance or return result
+        // TODO: need to find something special
+        if (is_array($result)) {
+            return new static($result);
+        }
 
-        return new static($container);
+        return $result;
     }
 
     /**
@@ -54,6 +58,14 @@ class Ooe
         $this->name = static::$mapping[$name];
 
         // TODO: 有些方法不需要传递数组 或者数组在最后一个位置，这里需要解决下
+        // 想法是把 container 属性的每一项的值变为数组 比如 ['changeKeyCase', 1]
+        // 参数2的值类型为: （值的取值还有待商榷）
+
+        // **** false 不传数组 ****
+        // **** 0     数组在第一个位置 ****
+        // **** -1    数组在最后一个位置 ****
+
+        // 然后开始通过判断在下边的方法中操作 $this->container的位置
 
         set_error_handler([$this, 'errorHandler']);
 
