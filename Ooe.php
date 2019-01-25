@@ -55,21 +55,39 @@ class Ooe
      */
     private function execBuiltInFunction(string $name, array $params)
     {
-        $this->name = static::$mapping[$name];
+        $this->name = static::$mapping[$name][0];
+
+        $pos = static::$mapping[$name][1];
 
         // TODO: 有些方法不需要传递数组 或者数组在最后一个位置，这里需要解决下
         // 想法是把 container 属性的每一项的值变为数组 比如 ['changeKeyCase', 1]
         // 参数2的值类型为: （值的取值还有待商榷）
 
-        // **** false 不传数组 ****
-        // **** 0     数组在第一个位置 ****
-        // **** -1    数组在最后一个位置 ****
+        // **** 0 不传数组 ****
+        // **** 1 数组在第一个位置 ****
+        // **** 2 数组在最后一个位置 ****
+        // **** 3 数组在第二个位置 ****
 
         // 然后开始通过判断在下边的方法中操作 $this->container的位置
 
         set_error_handler([$this, 'errorHandler']);
 
-        $result = call_user_func($this->name, $this->container, ...$params);
+        switch ($pos) {
+            case 0:
+                $result = call_user_func($this->name, ...$params);
+                break;
+            case 1:
+                $result = call_user_func($this->name, $this->container, ...$params);
+                break;
+            case 2:
+                array_push($params, $this->container);
+                $result = call_user_func($this->name, ...$params);
+                break;
+            case 3:
+                array_splice($params, 1, 0, $this->container);
+                $result = call_user_func($this->name, ...$params);
+                break;
+        }
 
         restore_error_handler();
 
