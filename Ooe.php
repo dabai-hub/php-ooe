@@ -4,7 +4,6 @@ namespace Hezalex\Ooe;
 
 class Ooe
 {
-
     /**
      * Ooe container
      *
