@@ -78,7 +78,7 @@ class ArrayOoe extends Ooe implements ArrayAccess, Countable, IteratorAggregate
         'values' => ['array_values', 1],
         'walkRecursive' => ['array_walk_recursive', 1],
         'walk' => ['array_walk', 1],
-        'array' => ['array', 0],
+        // 'array' => ['array', 0], // TODO: 实现方式： 直接写函数
         'arsort' => ['arsort', 1],
         'asort' => ['asort', 1],
         'compact' => ['compact', 0],
@@ -125,6 +125,17 @@ class ArrayOoe extends Ooe implements ArrayAccess, Countable, IteratorAggregate
     public function __construct(array $array = [])
     {
         $this->container = $array;
+    }
+
+    /**
+     * rebuild the value of container of array
+     *
+     * @param array $array
+     * @return ArrayOoe
+     */
+    public function array(array $array)
+    {
+        return new static($array);
     }
 
     /**
