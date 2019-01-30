@@ -14,56 +14,14 @@ use PHPUnit\Framework\TestCase;
 
 class ChangeKeyCaseTest extends TestCase
 {
-
-    private $instance;
-
-    /**
-     * @test
-     */
-    public function testGetInstance()
-    {
-        $instance = new ArrayOoe();
-
-        $this->assertTrue($instance instanceof ArrayOoe);
-
-        $this->instance = $instance;
-    }
-
-    /**
-     * 当返回的是数组的时候将属性值覆盖
-     *
-     * @param [type] $array
-     * @return void
-     */
-    public function generateNewArray($func, $origins, $expecteds, $params)
-    {
-        $this->instance->array($origins);
-
-        $this->assertInstanceOf(ArrayOoe::class, $this->instance);
-
-        $this->instance->{$func}(...$params);
-
-        $this->assertInstanceOf(ArrayOoe::class, $this->instance);
-
-        $actual = $this->instance->get();
-
-        $this->assertEquals($expecteds, $actual);
-    }
-
-    /**
-     * @test
-     */
     public function testChangeKeyCase()
     {
         $origins = ['A' => 1, 'B' => 2, 'C' => 3, 'D' => 4];
         $expecteds = ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4];
 
-        $this->generateNewArray(__FUNCTION__, $origins, $expecteds);
+        $this->checkAttribute('changeKeyCase', $origins, $expecteds, CASE_LOWER);
     }
 
-    /**
-     * @test
-     */
     public function testChunk()
     {
         $origins = [1, 2, 3, 4];
@@ -72,23 +30,34 @@ class ChangeKeyCaseTest extends TestCase
             [3, 4],
         ];
 
-        $this->generateNewArray(__FUNCTION__, $origins, $expecteds, [2]);
+        $this->checkAttribute('chunk', $origins, $expecteds, 2);
     }
 
-    /**
-     * @test
-     */
-    public function column()
+    public function testColumn()
     {
         $origins = [
             ['a' => 11, 'b' => 12, 'c' => 13],
             ['a' => 21, 'b' => 22, 'c' => 23],
             ['a' => 31, 'b' => 32, 'c' => 33],
         ];
-
         $expecteds = [11, 21, 31];
 
-        $this->generateNewArray(__FUNCTION__, $origins, $expecteds, ['a']);
+        $this->checkAttribute('column', $origins, $expecteds, 'a');
+    }
+
+    private function checkAttribute($func, $origins, $expecteds, ...$params)
+    {
+        $instance = new ArrayOoe($origins);
+
+        $this->assertInstanceOf(ArrayOoe::class, $instance);
+
+        $result = $instance->{$func}(...$params);
+
+        $this->assertInstanceOf(ArrayOoe::class, $result);
+
+        $actual = $result->get();
+
+        $this->assertEquals($expecteds, $actual);
     }
 
 }
