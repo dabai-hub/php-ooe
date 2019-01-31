@@ -45,6 +45,103 @@ class ChangeKeyCaseTest extends TestCase
         $this->checkAttribute('column', $origins, $expecteds, 'a');
     }
 
+    public function testCombine()
+    {
+        $origins = ['a', 'b', 'c', 'd'];
+        $param = [1, 2, 3, 4];
+        $expecteds = ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4];
+
+        $this->checkAttribute('combine', $origins, $expecteds, $param);
+    }
+
+    public function testCountValues()
+    {
+        $origins = [1, 1, 2, 2, 3, 4, 5, 5, 5];
+        $expecteds = [
+            1 => 2,
+            2 => 2,
+            3 => 1,
+            4 => 1,
+            5 => 3,
+        ];
+
+        $this->checkAttribute('countValues', $origins, $expecteds);
+    }
+
+    public function testDiffAssoc()
+    {
+        $origins = ['a' => 'green', 'b' => 'brown', 'c' => 'blue', 'red'];
+        $param = ['a' => 'green', 'yellow', 'red'];
+        $expecteds = ['b' => 'brown', 'c' => 'blue', 'red'];
+
+        $this->checkAttribute('diffAssoc', $origins, $expecteds, $param);
+    }
+
+    public function testDiffKey()
+    {
+        $origins = ['blue' => 1, 'red' => 2, 'green' => 3, 'purple' => 4];
+        $param = ['green' => 5, 'blue' => 6, 'yellow' => 7, 'cyan' => 8];
+        $expecteds = ['red' => 2, 'purple' => 4];
+
+        $this->checkAttribute('diffKey', $origins, $expecteds, $param);
+    }
+
+    public function testDiffUassoc()
+    {
+        $origins = ['a' => 'green', 'b' => 'brown', 'c' => 'blue', 'red'];
+        $param = ['a' => 'green', 'yellow', 'red'];
+        $closure = function ($a, $b) {
+            if ($a === $b) {
+                return 0;
+            }
+            return ($a > $b) ? 1 : -1;
+        };
+        $expecteds = ['b' => 'brown', 'c' => 'blue', 'red'];
+
+        $this->checkAttribute('diffUassoc', $origins, $expecteds, $param, $closure);
+    }
+
+    public function testDiffUkey()
+    {
+        $origins = ['blue'  => 1, 'red'  => 2, 'green'  => 3, 'purple' => 4];
+        $param = ['green' => 5, 'blue' => 6, 'yellow' => 7, 'cyan' => 8];
+        $closure = function ($key1, $key2) {
+            if ($key1 == $key2) {
+                return 0;
+            } elseif ($key1 > $key2) {
+                return 1;
+            } else {
+                return -1;
+            }
+        };
+        $expecteds = ['red' => 2, 'purple' => 4];
+
+        $this->checkAttribute('diffUkey', $origins, $expecteds, $param, $closure);
+    }
+
+    public function testDiff()
+    {
+        $origins = ['a' => 'green', 'red', 'blue', 'red'];
+        $param = ['b' => 'green', 'yellow', 'red'];
+        $expecteds = [1 => 'blue'];
+
+        $this->checkAttribute('diff', $origins, $expecteds, $param);
+    }
+
+    public function testFillKeys()
+    {
+        $origins = ['foo', 5, 10, 'bar'];
+        $value = 'banana';
+        $expecteds = [
+            'foo' => 'banana',
+            5 => 'banana',
+            10 => 'banana',
+            'bar' => 'banana',
+        ];
+
+        $this->checkAttribute('fillKeys', $origins, $expecteds, $value);
+    }
+
     private function checkAttribute($func, $origins, $expecteds, ...$params)
     {
         $instance = new ArrayOoe($origins);
