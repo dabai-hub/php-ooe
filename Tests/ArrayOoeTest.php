@@ -142,6 +142,42 @@ class ChangeKeyCaseTest extends TestCase
         $this->checkAttribute('fillKeys', $origins, $expecteds, $value);
     }
 
+    public function testFill()
+    {
+        $start = 5;
+        $num = 6;
+        $value = 'banana';
+        $expecteds = [
+            5 => 'banana',
+            6 => 'banana',
+            7 => 'banana',
+            8 => 'banana',
+            9 => 'banana',
+            10 => 'banana',
+        ];
+
+        $this->checkAttribute('fill', [], $expecteds, $start, $num, $value);
+    }
+
+    public function checkFilter()
+    {
+        $origins = ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5];
+        $closure = function ($value) {
+            return ($value & 1);
+        };
+        $expecteds = ['a' => 1, 'c' => 3, 'e' => 5];
+
+        $this->checkAttribute('filter', $origins, $expecteds, $closure);
+    }
+
+    public function checkFlip()
+    {
+        $origins = ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5];
+        $expecteds = ['a', 'b', 'c', 'd', 'e'];
+
+        $this->checkAttribute('flip', $origins, $expecteds);
+    }
+
     private function checkAttribute($func, $origins, $expecteds, ...$params)
     {
         $instance = new ArrayOoe($origins);
