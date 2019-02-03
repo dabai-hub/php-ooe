@@ -37,7 +37,7 @@ class ArrayOoe extends Ooe implements ArrayAccess, Countable, IteratorAggregate
         'diffUkey' => ['array_diff_ukey', 0],
         'diff' => ['array_diff', 0],
         'fillKeys' => ['array_fill_keys', 0],
-        // 'fill' => ['array_fill', 0], // TODO: 这里有问题 这里不操作数组，而是生成数组  暂不支持
+        // 'fill' => ['array_fill', 0], // NOTICE: 这里使用方法直接实现
         'filter' => ['array_filter', 0],
         'flip' => ['array_flip', 0],
         'intersectAssoc' => ['array_intersect_assoc', 0],

@@ -159,7 +159,7 @@ class ChangeKeyCaseTest extends TestCase
         $this->checkAttribute('fill', [], $expecteds, $start, $num, $value);
     }
 
-    public function checkFilter()
+    public function testFilter()
     {
         $origins = ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5];
         $closure = function ($value) {
@@ -170,12 +170,66 @@ class ChangeKeyCaseTest extends TestCase
         $this->checkAttribute('filter', $origins, $expecteds, $closure);
     }
 
-    public function checkFlip()
+    public function testFlip()
     {
         $origins = ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5];
-        $expecteds = ['a', 'b', 'c', 'd', 'e'];
+        $expecteds = [1 => 'a', 2 => 'b', 3 => 'c', 4 => 'd', 5 => 'e'];
 
         $this->checkAttribute('flip', $origins, $expecteds);
+    }
+
+    public function testIntersectAssoc()
+    {
+        $origins = ['a' => 'green', 'b' => 'brown', 'c' => 'blue', 'red'];
+        $param = ['a' => 'green', 'b' => 'yellow', 'blue', 'red'];
+        $expecteds = ['a' => 'green'];
+
+        $this->checkAttribute('intersectAssoc', $origins, $expecteds, $param);
+    }
+
+    public function testIntersectKey()
+    {
+        $origins = ['blue' => 1, 'red' => 2, 'green' => 3, 'purple' => 4];
+        $param = ['green' => 5, 'blue' => 6, 'yellow' => 7, 'cyan' => 8];
+        $expecteds = ['blue' => 1, 'green' => 3];
+
+        $this->checkAttribute('intersectKey', $origins, $expecteds, $param);
+    }
+
+    public function testIntersectUassoc()
+    {
+        $origins = ['a' => 'green', 'b' => 'brown', 'c' => 'blue', 'red'];
+        $param = ['a' => 'GREEN', 'B' => 'brown', 'yellow', 'red'];
+        $expecteds = ['b' => 'brown'];
+
+        $this->checkAttribute('intersectUassoc', $origins, $expecteds, $param, 'strcasecmp');
+    }
+
+    public function testIntersectUkey()
+    {
+        $origins = ['blue' => 1, 'red' => 2, 'green' => 3, 'purple' => 4];
+        $param = ['green' => 5, 'blue' => 6, 'yellow' => 7, 'cyan' => 8];
+        $closure = function($key1, $key2) {
+            if ($key1 == $key2) {
+                return 0;
+            } elseif ($key1 > $key2) {
+                return 1;
+            } else {
+                return -1;
+            }
+        };
+        $expecteds = ['blue' => 1, 'green' => 3];
+
+        $this->checkAttribute('intersectUkey', $origins, $expecteds, $param, $closure);
+    }
+
+    public function testIntersect()
+    {
+        $origins = ['a' => 'green', 'red', 'blue'];
+        $param = ['b' => 'green', 'yellow', 'red'];
+        $expecteds = ['a' => 'green', 'red'];
+
+        $this->checkAttribute('intersect', $origins, $expecteds, $param);
     }
 
     private function checkAttribute($func, $origins, $expecteds, ...$params)
