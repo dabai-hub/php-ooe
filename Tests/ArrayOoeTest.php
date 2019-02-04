@@ -232,13 +232,32 @@ class ChangeKeyCaseTest extends TestCase
         $this->checkAttribute('intersect', $origins, $expecteds, $param);
     }
 
+    public function testKeyExists()
+    {
+        $origins = ['first' => 1, 'second' => 4];
+        $expecteds = true;
+
+        $this->checkReturnBool('keyExists', $origins, true, 'first');
+        $this->checkReturnBool('keyExists', $origins, false, 'test');
+    }
+
+    public function testKeyFirst()
+    {
+        $origins = ['a' => 1, 'b' => 2, 'c' => 3];
+
+        $this->checkReturnOther('keyFirst', $origins, 'a');
+    }
+
+    public function testKeyLast()
+    {
+        $origins = ['a' => 1, 'b' => 2, 'c' => 3];
+
+        $this->checkReturnOther('keyLast', $origins, 'c');
+    }
+
     private function checkAttribute($func, $origins, $expecteds, ...$params)
     {
-        $instance = new ArrayOoe($origins);
-
-        $this->assertInstanceOf(ArrayOoe::class, $instance);
-
-        $result = $instance->{$func}(...$params);
+        $result = $this->commonCheck($func, $origins, $params);
 
         $this->assertInstanceOf(ArrayOoe::class, $result);
 
@@ -247,4 +266,27 @@ class ChangeKeyCaseTest extends TestCase
         $this->assertEquals($expecteds, $actual);
     }
 
+    private function checkReturnBool($func, $origins, $expecteds, ...$params)
+    {
+        $result = $this->commonCheck($func, $origins, $params);
+
+        $expecteds ? $this->assertTrue($result) : $this->assertFalse($result);
+    }
+
+    private function checkReturnOther($func, $origins, $expecteds, ...$params)
+    {
+        $result = $this->commonCheck($func, $origins, $params);
+
+        $this->assertEquals($expecteds, $result);
+    }
+
+
+    private function commonCheck($func, $origins, $params)
+    {
+        $instance = new ArrayOoe($origins);
+
+        $this->assertInstanceOf(ArrayOoe::class, $instance);
+
+        return $instance->{$func}(...$params);
+    }
 }
