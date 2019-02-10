@@ -241,18 +241,39 @@ class ChangeKeyCaseTest extends TestCase
         $this->checkReturnBool('keyExists', $origins, false, 'test');
     }
 
-    public function testKeyFirst()
-    {
-        $origins = ['a' => 1, 'b' => 2, 'c' => 3];
+    // TODO: php >= 7.3
+    // public function testKeyFirst()
+    // {
+    //     $origins = ['a' => 1, 'b' => 2, 'c' => 3];
 
-        $this->checkReturnOther('keyFirst', $origins, 'a');
+    //     $this->checkReturnOther('keyFirst', $origins, 'a');
+    // }
+
+    // TODO: php >= 7.3
+    // public function testKeyLast()
+    // {
+    //     $origins = ['a' => 1, 'b' => 2, 'c' => 3];
+
+    //     $this->checkReturnOther('keyLast', $origins, 'c');
+    // }
+
+    public function testKeys()
+    {
+        $origins = ['blue', 'red', 'green', 'blue', 'blue', 'color' => 'blue'];
+        $expecteds = [0, 3, 4, 'color'];
+
+        $this->checkAttribute('keys', $origins, $expecteds, 'blue');
     }
 
-    public function testKeyLast()
+    public function testMap()
     {
-        $origins = ['a' => 1, 'b' => 2, 'c' => 3];
+        $origins = [1, 2, 3, 4, 5];
+        $expecteds = [1, 8, 27, 64, 125];
+        $closure = function ($n) {
+            return ($n * $n * $n);
+        };
 
-        $this->checkReturnOther('keyLast', $origins, 'c');
+        $this->checkAttribute('map', $origins, $expecteds, $closure);
     }
 
     private function checkAttribute($func, $origins, $expecteds, ...$params)
