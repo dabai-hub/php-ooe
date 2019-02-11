@@ -142,13 +142,199 @@ class ChangeKeyCaseTest extends TestCase
         $this->checkAttribute('fillKeys', $origins, $expecteds, $value);
     }
 
+    public function testFill()
+    {
+        $start = 5;
+        $num = 6;
+        $value = 'banana';
+        $expecteds = [
+            5 => 'banana',
+            6 => 'banana',
+            7 => 'banana',
+            8 => 'banana',
+            9 => 'banana',
+            10 => 'banana',
+        ];
+
+        $this->checkAttribute('fill', [], $expecteds, $start, $num, $value);
+    }
+
+    public function testFilter()
+    {
+        $origins = ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5];
+        $closure = function ($value) {
+            return ($value & 1);
+        };
+        $expecteds = ['a' => 1, 'c' => 3, 'e' => 5];
+
+        $this->checkAttribute('filter', $origins, $expecteds, $closure);
+    }
+
+    public function testFlip()
+    {
+        $origins = ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5];
+        $expecteds = [1 => 'a', 2 => 'b', 3 => 'c', 4 => 'd', 5 => 'e'];
+
+        $this->checkAttribute('flip', $origins, $expecteds);
+    }
+
+    public function testIntersectAssoc()
+    {
+        $origins = ['a' => 'green', 'b' => 'brown', 'c' => 'blue', 'red'];
+        $param = ['a' => 'green', 'b' => 'yellow', 'blue', 'red'];
+        $expecteds = ['a' => 'green'];
+
+        $this->checkAttribute('intersectAssoc', $origins, $expecteds, $param);
+    }
+
+    public function testIntersectKey()
+    {
+        $origins = ['blue' => 1, 'red' => 2, 'green' => 3, 'purple' => 4];
+        $param = ['green' => 5, 'blue' => 6, 'yellow' => 7, 'cyan' => 8];
+        $expecteds = ['blue' => 1, 'green' => 3];
+
+        $this->checkAttribute('intersectKey', $origins, $expecteds, $param);
+    }
+
+    public function testIntersectUassoc()
+    {
+        $origins = ['a' => 'green', 'b' => 'brown', 'c' => 'blue', 'red'];
+        $param = ['a' => 'GREEN', 'B' => 'brown', 'yellow', 'red'];
+        $expecteds = ['b' => 'brown'];
+
+        $this->checkAttribute('intersectUassoc', $origins, $expecteds, $param, 'strcasecmp');
+    }
+
+    public function testIntersectUkey()
+    {
+        $origins = ['blue' => 1, 'red' => 2, 'green' => 3, 'purple' => 4];
+        $param = ['green' => 5, 'blue' => 6, 'yellow' => 7, 'cyan' => 8];
+        $closure = function($key1, $key2) {
+            if ($key1 == $key2) {
+                return 0;
+            } elseif ($key1 > $key2) {
+                return 1;
+            } else {
+                return -1;
+            }
+        };
+        $expecteds = ['blue' => 1, 'green' => 3];
+
+        $this->checkAttribute('intersectUkey', $origins, $expecteds, $param, $closure);
+    }
+
+    public function testIntersect()
+    {
+        $origins = ['a' => 'green', 'red', 'blue'];
+        $param = ['b' => 'green', 'yellow', 'red'];
+        $expecteds = ['a' => 'green', 'red'];
+
+        $this->checkAttribute('intersect', $origins, $expecteds, $param);
+    }
+
+    public function testKeyExists()
+    {
+        $origins = ['first' => 1, 'second' => 4];
+        $expecteds = true;
+
+        $this->checkReturnBool('keyExists', $origins, true, 'first');
+        $this->checkReturnBool('keyExists', $origins, false, 'test');
+    }
+
+    // TODO: php >= 7.3
+    public function testKeyFirst()
+    {
+        if (PHP_VERSION_ID < 70300) {
+            $this->markTestSkipped('PHP version is greater than 7.3 to support keyFirst method');
+        }
+
+        $origins = ['a' => 1, 'b' => 2, 'c' => 3];
+
+        $this->checkReturnOther('keyFirst', $origins, 'a');
+    }
+
+    // TODO: php >= 7.3
+    public function testKeyLast()
+    {
+        if (PHP_VERSION_ID < 70300) {
+            $this->markTestSkipped('PHP version is greater than 7.3 to support keyFirst method');
+        }
+
+        $origins = ['a' => 1, 'b' => 2, 'c' => 3];
+
+        $this->checkReturnOther('keyLast', $origins, 'c');
+    }
+
+    public function testKeys()
+    {
+        $origins = ['blue', 'red', 'green', 'blue', 'blue', 'color' => 'blue'];
+        $expecteds = [0, 3, 4, 'color'];
+
+        $this->checkAttribute('keys', $origins, $expecteds, 'blue');
+    }
+
+    public function testMap()
+    {
+        $origins = [1, 2, 3, 4, 5];
+        $expecteds = [1, 8, 27, 64, 125];
+        $closure = function ($n) {
+            return ($n * $n * $n);
+        };
+
+        $this->checkAttribute('map', $origins, $expecteds, $closure);
+    }
+
+    public function testMergeRecursive()
+    {
+        $origins = ['color' => ['favorite' => 'red'], 5];
+        $param = [10, 'color' => ['favorite' => 'green', 'blue']];
+        $expecteds = ['color' => ['favorite' => ['red', 'green'], 'blue'], 5, 10];
+
+        $this->checkAttribute('mergeRecursive', $origins, $expecteds, $param);
+    }
+
+    public function testMerge()
+    {
+        $origins = ['color' => 'red', 2, 4];
+        $param = ['a', 'b', 'color' => 'green', 'shape' => 'trapezoid', 4];
+        $expecteds = ['color' => 'green', 2, 4, 'a', 'b', 'shape' => 'trapezoid', 4];
+
+        $this->checkAttribute('merge', $origins, $expecteds, $param);
+    }
+
+    // public function testmultisort()
+    // {
+    //     $origins = [10, 100, 100, 0];
+    //     $param = [1, 3, 2, 4];
+
+    //     $instance = new ArrayOoe($origins);
+
+    //     $this->assertInstanceOf(ArrayOoe::class, $instance);
+
+    //     $instance->multisort($param);
+
+    //     $this->assertEquals([0, 10, 100, 100], $instance->get());
+    //     $this->assertEquals([4, 1, 2, 3], $param);
+    // }
+
+    public function testPad()
+    {
+        $origins = [12, 10, 9];
+        $size = 5;
+        $value = 0;
+        $expecteds = [12, 10, 9, 0, 0];
+
+        $this->checkAttribute('pad', $origins, $expecteds, $size, $value);
+    }
+
+    // public function testPop()
+    // {
+
+    // }
+
     private function checkAttribute($func, $origins, $expecteds, ...$params)
     {
-        $instance = new ArrayOoe($origins);
-
-        $this->assertInstanceOf(ArrayOoe::class, $instance);
-
-        $result = $instance->{$func}(...$params);
+        $result = $this->commonCheck($func, $origins, $params);
 
         $this->assertInstanceOf(ArrayOoe::class, $result);
 
@@ -157,4 +343,27 @@ class ChangeKeyCaseTest extends TestCase
         $this->assertEquals($expecteds, $actual);
     }
 
+    private function checkReturnBool($func, $origins, $expecteds, ...$params)
+    {
+        $result = $this->commonCheck($func, $origins, $params);
+
+        $expecteds ? $this->assertTrue($result) : $this->assertFalse($result);
+    }
+
+    private function checkReturnOther($func, $origins, $expecteds, ...$params)
+    {
+        $result = $this->commonCheck($func, $origins, $params);
+
+        $this->assertEquals($expecteds, $result);
+    }
+
+
+    private function commonCheck($func, $origins, $params)
+    {
+        $instance = new ArrayOoe($origins);
+
+        $this->assertInstanceOf(ArrayOoe::class, $instance);
+
+        return $instance->{$func}(...$params);
+    }
 }

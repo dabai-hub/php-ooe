@@ -37,7 +37,7 @@ class ArrayOoe extends Ooe implements ArrayAccess, Countable, IteratorAggregate
         'diffUkey' => ['array_diff_ukey', 0],
         'diff' => ['array_diff', 0],
         'fillKeys' => ['array_fill_keys', 0],
-        'fill' => ['array_fill', 0], // TODO: 这里有问题 这里不操作数组，而是生成数组
+        // 'fill' => ['array_fill', 0], // NOTICE: 实现方式： 直接写函数
         'filter' => ['array_filter', 0],
         'flip' => ['array_flip', 0],
         'intersectAssoc' => ['array_intersect_assoc', 0],
@@ -52,7 +52,7 @@ class ArrayOoe extends Ooe implements ArrayAccess, Countable, IteratorAggregate
         'map' => ['array_map', 2],
         'mergeRecursive' => ['array_merge_recursive', 0],
         'merge' => ['array_merge', 0],
-        'multisort' => ['array_multisort', 0],
+        // 'multisort' => ['array_multisort', 0], // TODO: 这里的问题是返回bool值 但是数组有引用调用，属性没有被修改 而是直接返回了 布尔值
         'pad' => ['array_pad', 0],
         'pop' => ['array_pop', 0],
         'product' => ['array_product', 0],
@@ -78,7 +78,7 @@ class ArrayOoe extends Ooe implements ArrayAccess, Countable, IteratorAggregate
         'values' => ['array_values', 0],
         'walkRecursive' => ['array_walk_recursive', 0],
         'walk' => ['array_walk', 0],
-        // 'array' => ['array', 0], // TODO: 实现方式： 直接写函数
+        // 'array' => ['array', 0], // NOTICE: 实现方式： 直接写函数
         'arsort' => ['arsort', 0],
         'asort' => ['asort', 0],
         'compact' => ['compact', 0],
@@ -133,8 +133,15 @@ class ArrayOoe extends Ooe implements ArrayAccess, Countable, IteratorAggregate
      * @param array $array
      * @return ArrayOoe
      */
-    public function array(array $array)
+    public function array(array $array) : self
     {
+        return new static($array);
+    }
+
+    public function fill(int $start, int $num, $value) : self
+    {
+        $array = array_fill($start, $num, $value);
+
         return new static($array);
     }
 

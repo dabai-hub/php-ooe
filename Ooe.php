@@ -75,15 +75,16 @@ class Ooe
 
         switch ($pos) {
             case 0:
-                $result = call_user_func($this->name, $this->container, ...$params);
+                array_splice($params, 0, 0, $this->container);
+                $result = call_user_func_array($this->name, $params);
                 break;
             case 1:
                 array_splice($params, 1, 0, $this->container);
-                $result = call_user_func($this->name, ...$params);
+                $result = call_user_func_array($this->name, $params);
                 break;
             case 2:
                 array_push($params, $this->container);
-                $result = call_user_func($this->name, ...$params);
+                $result = call_user_func_array($this->name, $params);
                 break;
             default:
                 throw new InvalidArgumentException('Invalid pos value');
