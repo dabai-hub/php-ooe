@@ -23,38 +23,45 @@ class ArrayOoe extends Ooe implements ArrayAccess, Countable, IteratorAggregate
     /**
      * built-in functions mapping
      *
+     * Array parameter description:
+     *
+     * @param string $name: Corresponding PHP built-in function name.
+     * @param int    $pos: The position of the manipulated array in the built-in function. 0 is first, 1 is second, 2 is last, 3 instructions do not pass array.
+     * @param bool   $option: Whether the return value give to Ooe attribute or just return. 0 return to attribute, 1 return.
+     * @param bool   $reference: Whether the array is a reference type.
+     *
      * @var array
      */
     protected static $mapping = [
-        'changeKeyCase' => ['array_change_key_case', 0],
-        'chunk' => ['array_chunk', 0],
-        'column' => ['array_column', 0],
-        'combine' => ['array_combine', 0],
-        'countValues' => ['array_count_values', 0],
-        'diffAssoc' => ['array_diff_assoc', 0],
-        'diffKey' => ['array_diff_key', 0],
-        'diffUassoc' => ['array_diff_uassoc', 0],
-        'diffUkey' => ['array_diff_ukey', 0],
-        'diff' => ['array_diff', 0],
-        'fillKeys' => ['array_fill_keys', 0],
-        // 'fill' => ['array_fill', 0], // NOTICE: 实现方式： 直接写函数
-        'filter' => ['array_filter', 0],
-        'flip' => ['array_flip', 0],
-        'intersectAssoc' => ['array_intersect_assoc', 0],
-        'intersectKey' => ['array_intersect_key', 0],
-        'intersectUassoc' => ['array_intersect_uassoc', 0],
-        'intersectUkey' => ['array_intersect_ukey', 0],
-        'intersect' => ['array_intersect', 0],
-        'keyExists' => ['array_key_exists', 2],
-        'keyFirst' => ['array_key_first', 0],
-        'keyLast' => ['array_key_last', 0],
-        'keys' => ['array_keys', 0],
-        'map' => ['array_map', 2],
-        'mergeRecursive' => ['array_merge_recursive', 0],
-        'merge' => ['array_merge', 0],
-        // 'multisort' => ['array_multisort', 0], // TODO: 这里的问题是返回bool值 但是数组有引用调用，属性没有被修改 而是直接返回了 布尔值
-        'pad' => ['array_pad', 0],
-        'pop' => ['array_pop', 0],
+        'changeKeyCase' => ['array_change_key_case', 0, 0, 0],
+        'chunk' => ['array_chunk', 0, 0, 0],
+        'column' => ['array_column', 0, 0, 0],
+        'combine' => ['array_combine', 0, 0, 0],
+        'countValues' => ['array_count_values', 0, 0, 0],
+        'diffAssoc' => ['array_diff_assoc', 0, 0, 0],
+        'diffKey' => ['array_diff_key', 0, 0, 0],
+        'diffUassoc' => ['array_diff_uassoc', 0, 0, 0],
+        'diffUkey' => ['array_diff_ukey', 0, 0, 0],
+        'diff' => ['array_diff', 0, 0, 0],
+        'fillKeys' => ['array_fill_keys', 0, 0, 0],
+        'fill' => ['array_fill', 3, 0, 0],
+        'filter' => ['array_filter', 0, 0, 0],
+        'flip' => ['array_flip', 0, 0, 0],
+        'intersectAssoc' => ['array_intersect_assoc', 0, 0, 0],
+        'intersectKey' => ['array_intersect_key', 0, 0, 0],
+        'intersectUassoc' => ['array_intersect_uassoc', 0, 0, 0],
+        'intersectUkey' => ['array_intersect_ukey', 0, 0, 0],
+        'intersect' => ['array_intersect', 0, 0, 0],
+        'keyExists' => ['array_key_exists', 2, 1, 0],
+        'keyFirst' => ['array_key_first', 0, 0, 0],
+        'keyLast' => ['array_key_last', 0, 0, 0],
+        'keys' => ['array_keys', 0, 0, 0],
+        'map' => ['array_map', 1, 0, 0],
+        'mergeRecursive' => ['array_merge_recursive', 0, 0, 0],
+        'merge' => ['array_merge', 0, 0, 0],
+        // 'multisort' => ['array_multisort', 0, 0, 1],
+        'pad' => ['array_pad', 0, 0, 0],
+        'pop' => ['array_pop', 0, 0, 1],
         'product' => ['array_product', 0],
         'push' => ['array_push', 0],
         'rand' => ['array_rand', 0],
@@ -87,7 +94,7 @@ class ArrayOoe extends Ooe implements ArrayAccess, Countable, IteratorAggregate
         'end' => ['end', 0],
         'extract' => ['extract', 0],
         'inArray' => ['in_array', 2],
-        'keyExists' => ['key_exists', 2],
+        'keyExists2' => ['key_exists', 2],
         'key' => ['key', 0],
         'krsort' => ['krsort', 0],
         'ksort' => ['ksort', 0],
@@ -135,13 +142,6 @@ class ArrayOoe extends Ooe implements ArrayAccess, Countable, IteratorAggregate
      */
     public function array(array $array) : self
     {
-        return new static($array);
-    }
-
-    public function fill(int $start, int $num, $value) : self
-    {
-        $array = array_fill($start, $num, $value);
-
         return new static($array);
     }
 

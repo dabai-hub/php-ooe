@@ -35,17 +35,21 @@ class Ooe
      */
     protected static $mapping = [];
 
+    /**
+     * execute the Ooe method
+     *
+     * @param array $params
+     * @return mixed
+     */
     private function execOoeMethod($params)
     {
-        $result = $this->execBuiltInFunction($this->ooeName, $params);
+        [$result, $option] = $this->execBuiltInFunction($this->ooeName, $params);
 
-        // if result is array return instance or return result
-        // TODO: need to find something special
-        if (is_array($result)) {
-            return new static($result);
+        if ($option) {
+            return $result;
         }
 
-        return $result;
+        return new static($result);
     }
 
     /**
@@ -61,29 +65,33 @@ class Ooe
 
         $pos = static::$mapping[$name][1];
 
-        // TODO: 有些方法不需要传递数组 或者数组在最后一个位置，这里需要解决下
-        // 想法是把 container 属性的每一项的值变为数组 比如 ['changeKeyCase', 1]
-        // 参数2的值类型为: （值的取值还有待商榷）
+        $option = static::$mapping[$name][2];
+
+        $reference = static::$mapping[$name][3];
 
         // **** 0 数组在第一个位置 ****
         // **** 1 数组在第二个位置 ****
         // **** 2 数组在最后一个位置 ****
-
+        // **** 3 不传数组 ****
         // 然后开始通过判断在下边的方法中操作 $this->container的位置
 
         set_error_handler([$this, 'errorHandler']);
 
         switch ($pos) {
             case 0:
-                array_splice($params, 0, 0, $this->container);
-                $result = call_user_func_array($this->name, $params);
+                if ($reference) {
+                    $result = call_user_func_array($this->name, array_merge([&$this->container], $params));
+                } else {
+                    $result = call_user_func($this->name, $this->container, ...$params);
+                }
                 break;
             case 1:
-                array_splice($params, 1, 0, $this->container);
+                array_splice($params, 1, 0, [$this->container]);
                 $result = call_user_func_array($this->name, $params);
                 break;
             case 2:
                 array_push($params, $this->container);
+            case 3:
                 $result = call_user_func_array($this->name, $params);
                 break;
             default:
@@ -92,7 +100,7 @@ class Ooe
 
         restore_error_handler();
 
-        return $result;
+        return [$result, $option];
     }
 
     /**

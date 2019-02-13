@@ -12,7 +12,7 @@ namespace Test\ArrayOoe;
 use Hezalex\Ooe\ArrayOoe;
 use PHPUnit\Framework\TestCase;
 
-class ChangeKeyCaseTest extends TestCase
+class ArrayOoeTest extends TestCase
 {
     public function testChangeKeyCase()
     {
@@ -235,7 +235,6 @@ class ChangeKeyCaseTest extends TestCase
     public function testKeyExists()
     {
         $origins = ['first' => 1, 'second' => 4];
-        $expecteds = true;
 
         $this->checkReturnBool('keyExists', $origins, true, 'first');
         $this->checkReturnBool('keyExists', $origins, false, 'test');
@@ -329,7 +328,8 @@ class ChangeKeyCaseTest extends TestCase
 
     // public function testPop()
     // {
-
+    //     $origins = ['orange', 'banana', 'apple', 'raspberry'];
+    //     $expecteds = 'raspberry';
     // }
 
     private function checkAttribute($func, $origins, $expecteds, ...$params)
