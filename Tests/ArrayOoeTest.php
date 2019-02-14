@@ -326,11 +326,32 @@ class ArrayOoeTest extends TestCase
         $this->checkAttribute('pad', $origins, $expecteds, $size, $value);
     }
 
-    // public function testPop()
-    // {
-    //     $origins = ['orange', 'banana', 'apple', 'raspberry'];
-    //     $expecteds = 'raspberry';
-    // }
+    public function testPop()
+    {
+        $origins = ['orange', 'banana', 'apple', 'raspberry'];
+        $expecteds = 'raspberry';
+
+        $this->checkReturnOther('pop', $origins, $expecteds);
+    }
+
+    public function testProduct()
+    {
+        $origins = [2, 4, 6, 8];
+        $expecteds = 384;
+
+        $this->checkReturnOther('product', $origins, $expecteds);
+    }
+
+    public function testPush()
+    {
+        $origins = ['orange', 'banana'];
+        $param = ['apple', 'banana'];
+        $expecteds = 4; // ['orange', 'banana', 'apple', 'banana'];
+
+        $this->checkReturnOther('push', $origins, $expecteds, ...$param);
+    }
+
+    // checkReturnOther 后 应该还要检查属性是否正确 需要在封装个方法
 
     private function checkAttribute($func, $origins, $expecteds, ...$params)
     {
