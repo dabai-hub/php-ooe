@@ -346,12 +346,11 @@ class ArrayOoeTest extends TestCase
     {
         $origins = ['orange', 'banana'];
         $param = ['apple', 'banana'];
-        $expecteds = 4; // ['orange', 'banana', 'apple', 'banana'];
+        $expecteds = 4;
+        $attribute = ['orange', 'banana', 'apple', 'banana'];
 
-        $this->checkReturnOther('push', $origins, $expecteds, ...$param);
+        $this->checkReturnOtherAndAttribute('push', $origins, $expecteds, $attribute, ...$param);
     }
-
-    // checkReturnOther 后 应该还要检查属性是否正确 需要在封装个方法
 
     private function checkAttribute($func, $origins, $expecteds, ...$params)
     {
@@ -371,6 +370,15 @@ class ArrayOoeTest extends TestCase
         $expecteds ? $this->assertTrue($result) : $this->assertFalse($result);
     }
 
+    private function checkReturnBoolAndAttribute($func, $origins, $expecteds, $attribute, ...$params)
+    {
+        [$instance, $result] = $this->commonCheck($func, $origins, $params, true);
+
+        $expecteds ? $this->assertTrue($result) : $this->assertFalse($result);
+
+        $this->assertEquals($attribute, $instance->get());
+    }
+
     private function checkReturnOther($func, $origins, $expecteds, ...$params)
     {
         $result = $this->commonCheck($func, $origins, $params);
@@ -378,13 +386,27 @@ class ArrayOoeTest extends TestCase
         $this->assertEquals($expecteds, $result);
     }
 
+    private function checkReturnOtherAndAttribute($func, $origins, $expecteds, $attribute, ...$params)
+    {
+        [$instance, $result] = $this->commonCheck($func, $origins, $params, true);
 
-    private function commonCheck($func, $origins, $params)
+        $this->assertEquals($expecteds, $result);
+
+        $this->assertEquals($attribute, $instance->get());
+    }
+
+    private function commonCheck($func, $origins, $params, $options = false)
     {
         $instance = new ArrayOoe($origins);
 
         $this->assertInstanceOf(ArrayOoe::class, $instance);
 
-        return $instance->{$func}(...$params);
+        $result = $instance->{$func}(...$params);
+
+        if ($options) {
+            return [$instance, $result];
+        }
+
+        return $result;
     }
 }
