@@ -1,6 +1,4 @@
-<?php
-
-declare (strict_types = 1);
+<?php declare (strict_types = 1);
 
 namespace Hezalex\Ooe;
 
@@ -64,31 +62,31 @@ class ArrayOoe extends Ooe implements ArrayAccess, Countable, IteratorAggregate
         'pop' => ['array_pop', 0, 1, 1],
         'product' => ['array_product', 0, 1, 0],
         'push' => ['array_push', 0, 1, 1],
-        'rand' => ['array_rand', 0],
-        'reduce' => ['array_reduce', 0],
-        'replaceRecursive' => ['array_replace_recursive', 0],
-        'replace' => ['array_replace', 0],
-        'reverse' => ['array_reverse', 0],
-        'search' => ['array_search', 2],
-        'shift' => ['array_shift', 0],
-        'slice' => ['array_slice', 0],
-        'splice' => ['array_splice', 0],
-        'sum' => ['array_sum', 0],
-        'udiffAssoc' => ['array_udiff_assoc', 0],
-        'udiffUassoc' => ['array_udiff_uassoc', 0],
-        'udiff' => ['array_udiff', 0],
-        'uintersectAssoc' => ['array_uintersect_assoc', 0],
-        'uintersectUassoc' => ['array_uintersect_uassoc', 0],
-        'uintersect' => ['array_uintersect', 0],
-        'unique' => ['array_unique', 0],
-        'unshift' => ['array_unshift', 0],
-        'values' => ['array_values', 0],
-        'walkRecursive' => ['array_walk_recursive', 0],
-        'walk' => ['array_walk', 0],
-        // 'array' => ['array', 0], // NOTICE: 实现方式： 直接写函数
-        'arsort' => ['arsort', 0],
-        'asort' => ['asort', 0],
-        'compact' => ['compact', 0],
+        'rand' => ['array_rand', 0, 1, 0],
+        'reduce' => ['array_reduce', 0, 1, 0],
+        'replaceRecursive' => ['array_replace_recursive', 0, 0, 0],
+        'replace' => ['array_replace', 0, 0, 0],
+        'reverse' => ['array_reverse', 0, 0, 0],
+        'search' => ['array_search', 2, 1, 0],
+        'shift' => ['array_shift', 0, 1, 1],
+        'slice' => ['array_slice', 0, 0, 0],
+        'splice' => ['array_splice', 0, 1, 1],
+        'sum' => ['array_sum', 0, 1, 0],
+        'udiffAssoc' => ['array_udiff_assoc', 0, 0, 0],
+        'udiffUassoc' => ['array_udiff_uassoc', 0, 0, 0],
+        'udiff' => ['array_udiff', 0, 0, 0],
+        'uintersectAssoc' => ['array_uintersect_assoc', 0, 0, 0],
+        'uintersectUassoc' => ['array_uintersect_uassoc', 0, 0, 0],
+        'uintersect' => ['array_uintersect', 0, 0, 0],
+        'unique' => ['array_unique', 0, 0, 0],
+        'unshift' => ['array_unshift', 0, 1, 1],
+        'values' => ['array_values', 0, 0, 0],
+        'walkRecursive' => ['array_walk_recursive', 0, 1, 1],
+        'walk' => ['array_walk', 0, 1, 1],
+        // 'array' => ['array', 0], // 暂不支持
+        'arsort' => ['arsort', 0, 1, 1],
+        'asort' => ['asort', 0, 1, 1],
+        'compact' => ['compact', 3, 0, 0],
         // 'count' => ['count', 0], // 类中含有此方法
         'current' => ['current', 0],
         'end' => ['end', 0],
@@ -140,10 +138,10 @@ class ArrayOoe extends Ooe implements ArrayAccess, Countable, IteratorAggregate
      * @param array $array
      * @return ArrayOoe
      */
-    public function array(array $array) : self
-    {
-        return new static($array);
-    }
+    // public function array(...$array) : self
+    // {
+    //     return new static($array);
+    // }
 
     /**
      * return array
