@@ -112,7 +112,7 @@ class Ooe
      * @param  integer $errline
      * @return void
      */
-    private function errorHandler(int $errno, string $errstr, string $errfile, int $errline)
+    public function errorHandler(int $errno, string $errstr, string $errfile, int $errline)
     {
         switch ($errno) {
             case E_PARSE:
