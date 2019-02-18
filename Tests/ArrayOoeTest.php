@@ -511,8 +511,7 @@ class ArrayOoeTest extends TestCase
         $param[1]->width = 9;
         $param[1]->height = 2;
 
-        $closure = function ($a, $b)
-        {
+        $closure = function ($a, $b) {
             $areaA = $a->width * $a->height;
             $areaB = $b->width * $b->height;
 
@@ -660,6 +659,116 @@ class ArrayOoeTest extends TestCase
 
     //     $this->checkAttribute('compact', $origins, $expecteds, 'city', 'nothing_here', $locationVars);
     // }
+
+    public function testCurrent()
+    {
+        $origins = [1, 2, 3, 4, 5];
+        $expecteds = 1;
+
+        $this->checkReturnOther('current', $origins, $expecteds, $origins);
+    }
+
+    public function testEnd()
+    {
+        $origins = [1, 2, 3, 4, 5];
+        $expecteds = 5;
+
+        $this->checkReturnOther('end', $origins, $expecteds, $origins);
+    }
+
+    // public function testExtract()
+    // {
+    //     $origins = [
+    //         'color' => 'blue',
+    //         'size' => 'medium',
+    //         'shape' => 'sphere',
+    //     ];
+
+    // }
+
+    public function testInArray()
+    {
+        $origins = [1, 2, 3, 4, 5];
+        $param = 4;
+        $expecteds = true;
+
+        $this->checkReturnOther('inArray', $origins, $expecteds, $origins, $param);
+    }
+
+    public function testKey()
+    {
+        $origins = [
+            'fruit1' => 'apple',
+            'fruit2' => 'orange',
+            'fruit3' => 'grape',
+            'fruit4' => 'apple',
+            'fruit5' => 'apple',
+        ];
+        $expecteds = 'fruit1';
+
+        $this->checkReturnOther('key', $origins, $expecteds, $origins);
+    }
+
+    public function testKrsort()
+    {
+        $origins = ['d'=>'lemon', 'a'=>'orange', 'b'=>'banana', 'c'=>'apple'];
+        $expecteds = true;
+        $attribute = ['d'=>'lemon', 'c'=>'apple', 'b'=>'banana', 'a'=>'orange'];
+
+        $this->checkReturnOther('krsort', $origins, $expecteds, $attribute);
+    }
+
+    public function testKsort()
+    {
+        $origins = ['d'=>'lemon', 'a'=>'orange', 'b'=>'banana', 'c'=>'apple'];
+        $expecteds = true;
+        $attribute = ['a'=>'orange', 'b'=>'banana', 'c'=>'apple', 'd'=>'lemon'];
+
+        $this->checkReturnOther('ksort', $origins, $expecteds, $attribute);
+    }
+
+    public function testNatcasesort()
+    {
+        $origins = ['IMG0.png', 'img12.png', 'img10.png', 'img2.png', 'img1.png', 'IMG3.png'];
+        $expecteds = true;
+        $attribute = [0 => 'IMG0.png', 4 => 'img1.png', 3 => 'img2.png', 5 => 'IMG3.png', 2 => 'img10.png', 1 => 'img12.png'];
+
+        $this->checkReturnOther('natcasesort', $origins, $expecteds, $attribute);
+    }
+
+    public function testNatsort()
+    {
+        $origins = ['img12.png', 'img10.png', 'img2.png', 'img1.png'];
+        $expecteds = true;
+        $attribute = [3 => 'img1.png', 2 => 'img2.png', 1 => 'img10.png', 0 => 'img12.png'];
+
+        $this->checkReturnOther('natsort', $origins, $expecteds, $attribute);
+    }
+
+    public function testNext()
+    {
+        $origins = ['foot', 'bike', 'car', 'plane'];
+        $expecteds = 'bike';
+
+        $this->checkReturnOther('next', $origins, $expecteds, $origins);
+    }
+
+    public function testPos()
+    {
+        $origins = [1, 2, 3, 4, 5];
+        $expecteds = 1;
+
+        $this->checkReturnOther('pos', $origins, $expecteds, $origins);
+    }
+
+    public function testPrev()
+    {
+        $origins = ['foot', 'bike', 'car', 'plane'];
+        next($origins);
+        $expecteds = 'foot';
+
+        $this->checkReturnOther('prev', $origins, $expecteds, $origins);
+    }
 
     private function checkAttribute($func, $origins, $expecteds, ...$params)
     {
