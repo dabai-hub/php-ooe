@@ -770,6 +770,27 @@ class ArrayOoeTest extends TestCase
         $this->checkReturnOther('prev', $origins, $expecteds, $origins);
     }
 
+    public function testReset()
+    {
+        $origins = ['step one', 'step two', 'step three', 'step four'];
+        next($origins);
+        $expecteds = 'step one';
+
+        [$instance, $result] = $this->commonCheck('reset', $origins, [], true);
+
+        $this->assertEquals($result, $expecteds);
+        $this->assertEquals(current($instance->get()), 'step one');
+    }
+
+    public function testRsort()
+    {
+        $origins = ['lemon', 'orange', 'banana', 'apple'];
+        $expecteds = true;
+        $attribute = ['orange', 'lemon', 'banana', 'apple'];
+
+        $this->checkReturnBool('rsort', $origins, $expecteds, $attribute);
+    }
+
     private function checkAttribute($func, $origins, $expecteds, ...$params)
     {
         $result = $this->commonCheck($func, $origins, $params);
