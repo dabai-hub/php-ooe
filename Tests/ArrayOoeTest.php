@@ -599,7 +599,7 @@ class ArrayOoeTest extends TestCase
         $expecteds1 = true;
         $expecteds2 = 'a holds apple b holds banana sour holds lemon ';
 
-        $this->checkReturnOther('walkRecursive', $origins, $expecteds1, $origins, $closure);
+        $this->checkReturnBool('walkRecursive', $origins, $expecteds1, $origins, $closure);
         $this->assertEquals($result, $expecteds2);
     }
 
@@ -613,7 +613,7 @@ class ArrayOoeTest extends TestCase
         $expecteds1 = true;
         $expecteds2 = 'd. lemon a. orange b. banana c. apple ';
 
-        $this->checkReturnOther('walk', $origins, $expecteds1, $origins, $closure);
+        $this->checkReturnBool('walk', $origins, $expecteds1, $origins, $closure);
         $this->assertEquals($result, $expecteds2);
     }
 
@@ -636,7 +636,7 @@ class ArrayOoeTest extends TestCase
         $expecteds = true;
         $attribute = ['a' => 'orange', 'd' => 'lemon', 'b' => 'banana', 'c' => 'apple'];
 
-        $this->checkReturnOther('arsort', $origins, $expecteds, $attribute);
+        $this->checkReturnBool('arsort', $origins, $expecteds, $attribute);
     }
 
     public function testAsort()
@@ -645,7 +645,7 @@ class ArrayOoeTest extends TestCase
         $expecteds = true;
         $attribute = ['c' => 'apple', 'b' => 'banana', 'd' => 'lemon', 'a' => 'orange'];
 
-        $this->checkReturnOther('asort', $origins, $expecteds, $attribute);
+        $this->checkReturnBool('asort', $origins, $expecteds, $attribute);
     }
 
     // public function testCompact()
@@ -692,7 +692,7 @@ class ArrayOoeTest extends TestCase
         $param = 4;
         $expecteds = true;
 
-        $this->checkReturnOther('inArray', $origins, $expecteds, $origins, $param);
+        $this->checkReturnBool('inArray', $origins, $expecteds, $origins, $param);
     }
 
     public function testKey()
@@ -715,7 +715,7 @@ class ArrayOoeTest extends TestCase
         $expecteds = true;
         $attribute = ['d'=>'lemon', 'c'=>'apple', 'b'=>'banana', 'a'=>'orange'];
 
-        $this->checkReturnOther('krsort', $origins, $expecteds, $attribute);
+        $this->checkReturnBool('krsort', $origins, $expecteds, $attribute);
     }
 
     public function testKsort()
@@ -724,7 +724,7 @@ class ArrayOoeTest extends TestCase
         $expecteds = true;
         $attribute = ['a'=>'orange', 'b'=>'banana', 'c'=>'apple', 'd'=>'lemon'];
 
-        $this->checkReturnOther('ksort', $origins, $expecteds, $attribute);
+        $this->checkReturnBool('ksort', $origins, $expecteds, $attribute);
     }
 
     public function testNatcasesort()
@@ -733,7 +733,7 @@ class ArrayOoeTest extends TestCase
         $expecteds = true;
         $attribute = [0 => 'IMG0.png', 4 => 'img1.png', 3 => 'img2.png', 5 => 'IMG3.png', 2 => 'img10.png', 1 => 'img12.png'];
 
-        $this->checkReturnOther('natcasesort', $origins, $expecteds, $attribute);
+        $this->checkReturnBool('natcasesort', $origins, $expecteds, $attribute);
     }
 
     public function testNatsort()
@@ -742,7 +742,7 @@ class ArrayOoeTest extends TestCase
         $expecteds = true;
         $attribute = [3 => 'img1.png', 2 => 'img2.png', 1 => 'img10.png', 0 => 'img12.png'];
 
-        $this->checkReturnOther('natsort', $origins, $expecteds, $attribute);
+        $this->checkReturnBool('natsort', $origins, $expecteds, $attribute);
     }
 
     public function testNext()
@@ -789,6 +789,101 @@ class ArrayOoeTest extends TestCase
         $attribute = ['orange', 'lemon', 'banana', 'apple'];
 
         $this->checkReturnBool('rsort', $origins, $expecteds, $attribute);
+    }
+
+    public function testShuffle()
+    {
+        $origins = range(1, 5);
+        $attribute = [];
+
+        [$instance, $result] = $this->commonCheck('shuffle', $origins, [], true);
+
+        $copy = $instance->get();
+
+        $this->assertTrue($result);
+        $this->assertContains($copy[0], $origins);
+        $this->assertContains($copy[1], $origins);
+        $this->assertContains($copy[2], $origins);
+        $this->assertContains($copy[3], $origins);
+        $this->assertContains($copy[4], $origins);
+    }
+
+    public function testSizeOf()
+    {
+        $origins = [1, 2, 3, 4, 5];
+        $expecteds = 5;
+
+        $this->checkReturnOther('sizeof', $origins, $expecteds, $origins);
+    }
+
+    public function testSort()
+    {
+        $origins = ['lemon', 'orange', 'banana', 'apple'];
+        $expecteds = true;
+        $attribute = ['apple', 'banana', 'lemon', 'orange'];
+
+        $this->checkReturnBool('sort', $origins, $expecteds, $attribute);
+    }
+
+    public function testUasort()
+    {
+        $origins = ['a' => 4, 'b' => 8, 'c' => -1, 'd' => -9, 'e' => 2, 'f' => 5, 'g' => 3, 'h' => -4];
+        $closure = function ($a, $b) {
+            if ($a == $b) {
+                return 0;
+            }
+            return ($a < $b) ? -1 : 1;
+        };
+        $expecteds = true;
+        $attribute = ['d' => -9, 'h' => -4, 'c' => -1, 'e' => 2, 'g' => 3, 'a' => 4, 'f' => 5, 'b' => 8];
+
+        $this->checkReturnBool('uasort', $origins, $expecteds, $attribute, $closure);
+    }
+
+    public function testUksort()
+    {
+        $origins = ['John' => 1, 'the Earth' => 2, 'an apple' => 3, 'a banana' => 4];
+        $closure = function ($a, $b) {
+            $a = preg_replace('@^(a|an|the) @', '', $a);
+            $b = preg_replace('@^(a|an|the) @', '', $b);
+            return strcasecmp($a, $b);
+        };
+        $expecteds = true;
+        $attribute = ['an apple' => 3, 'a banana' => 4, 'the Earth' => 2, 'John' => 1];
+
+        $this->checkReturnBool('uksort', $origins, $expecteds, $attribute, $closure);
+    }
+
+    public function testUsort()
+    {
+        $origins = [3, 2, 5, 6, 1];
+        $closure = function ($a, $b) {
+            if ($a == $b) {
+                return 0;
+            }
+            return ($a < $b) ? -1 : 1;
+        };
+        $expecteds = true;
+        $attribute = [1, 2, 3, 5, 6];
+
+        $this->checkReturnBool('usort', $origins, $expecteds, $attribute, $closure);
+    }
+
+    public function testEach()
+    {
+        if (PHP_VERSION_ID >= 70200) {
+            $this->markTestSkipped('PHP version is Less than 7.2 to support each method');
+        }
+
+        $origins = ['bob', 'fred', 'jussi', 'jouni', 'egon', 'marliese'];
+        $expecteds = [0, 'bob', 'key' => 0, 'value' => 'bob'];
+
+        [$instance, $result] = $this->commonCheck('each', $origins, [], true);
+
+        $current = current($instance->get());
+
+        $this->assert($result, $expecteds);
+        $this->assertEquals($current, 'fred');
     }
 
     private function checkAttribute($func, $origins, $expecteds, ...$params)

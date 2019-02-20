@@ -105,13 +105,13 @@ class ArrayOoe extends Ooe implements ArrayAccess, Countable, IteratorAggregate
         // 'range' => 'range', // 暂不支持
         'reset' => ['reset', 0, 1, 1],
         'rsort' => ['rsort', 0, 1, 1],
-        'shuffle' => ['shuffle', 0],
-        'sizeof' => ['sizeof', 0],
-        'sort' => ['sort', 0],
-        'uasort' => ['uasort', 0],
-        'uksort' => ['uksort', 0],
-        'usort' => ['usort', 0],
-        'each' => ['each', 0],
+        'shuffle' => ['shuffle', 0, 1, 1],
+        'sizeof' => ['sizeof', 0, 1, 1],
+        'sort' => ['sort', 0, 1, 1],
+        'uasort' => ['uasort', 0, 1, 1],
+        'uksort' => ['uksort', 0, 1, 1],
+        'usort' => ['usort', 0, 1, 1],
+        'each' => ['each', 0, 1, 1],
     ];
 
     /**
