@@ -1,4 +1,5 @@
 .git
+.vscode
 /vendor
 composer.lock
 index.php
