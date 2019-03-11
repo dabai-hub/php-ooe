@@ -886,6 +886,61 @@ class ArrayOoeTest extends TestCase
         $this->assertEquals($current, 'fred');
     }
 
+    public function testGet()
+    {
+        $origins = [1, 2, 3, 4, 5, 6];
+
+        $this->checkReturnOther('get', $origins, $origins, $origins);
+    }
+
+    public function testToArray()
+    {
+        $origins = [1, 2, 3, 4, 5, 6];
+
+        $this->checkReturnOther('toArray', $origins, $origins, $origins);
+    }
+
+    public function testCount()
+    {
+        $origins = [1, 2, 3, 4, 5, 6];
+
+        $this->checkReturnOther('count', $origins, 6, $origins);
+    }
+
+    public function testOffsetExists()
+    {
+        $origins = [1, 2, 3, 4, 5, 6];
+
+        $this->checkReturnBool('offSetExists', $origins, true, $origins, 1);
+        $this->checkReturnBool('offSetExists', $origins, false, $origins, 7);
+    }
+
+    public function testOffsetGet()
+    {
+        $origins = [1, 2, 3, 4, 5, 6];
+
+        $this->checkReturnOther('offsetGet', $origins, 2, $origins, 1);
+    }
+
+    public function testOffsetSet()
+    {
+        $origins = [1, 2, 3, 4, 5, 6];
+        $expecteds = [7 , 8];
+        $attribute1 = [1, 2, 3, 4, 5, 6, [7, 8]];
+        $attribute2 = [1, 2, 3, 4, 5, 6, 8 => [7, 8]];
+
+        $this->checkReturnOther('offsetSet', $origins, null, $attribute1, null, $expecteds);
+        $this->checkReturnOther('offsetSet', $origins, null, $attribute2, 8, $expecteds);
+    }
+
+    public function testOffsetUnset()
+    {
+        $origins = [1, 2, 3, 4, 5, 6, [7, 8]];
+        $attribute = [1, 2, 3, 4, 5, 6];
+
+        $this->checkReturnOther('offsetUnset', $origins, null, $attribute, 6);
+    }
+
     private function checkAttribute($func, $origins, $expecteds, ...$params)
     {
         $result = $this->commonCheck($func, $origins, $params);

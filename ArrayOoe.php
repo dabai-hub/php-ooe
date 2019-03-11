@@ -177,9 +177,9 @@ class ArrayOoe extends Ooe implements ArrayAccess, Countable, IteratorAggregate
      * Whether an offset exists
      *
      * @param  mixed $offset
-     * @return boolean
+     * @return bool
      */
-    public function offsetExists($offset) : boolean
+    public function offsetExists($offset) : bool
     {
         return isset($this->container[$offset]);
     }
@@ -190,7 +190,7 @@ class ArrayOoe extends Ooe implements ArrayAccess, Countable, IteratorAggregate
      * @param mixed $offset
      * @return mixed
      */
-    public function offsetGet($offset) : mixed
+    public function offsetGet($offset)
     {
         return $this->container[$offset];
     }
